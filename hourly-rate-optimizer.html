@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hourly Rate Optimizer — Find Your Perfect Freelance Rate | IncomeAIHub</title>
+<meta name="description" content="Calculate the hourly, daily, weekly and project rate you actually need to hit your income goals — built for Indian freelancers, consultants and CAs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0f;
+    --bg-elev:#121218;
+    --bg-card:#16161f;
+    --border:#26262f;
+    --border-soft:#1e1e27;
+    --gold:#e8b84a;
+    --gold-dim:#8a6d2e;
+    --emerald:#2fd68f;
+    --violet:#9b7bf0;
+    --text:#f2f0ea;
+    --text-dim:#a3a0b0;
+    --text-faint:#69697a;
+    --danger:#ef6a6a;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(155,123,240,.14), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 100% 0%, rgba(47,214,143,.10), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    line-height:1.5;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-0.02em;}
+  .mono{font-family:'DM Mono',monospace;}
+  a{color:inherit;}
+  img{max-width:100%;}
+
+  /* Layout */
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px;}
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(10,10,15,.82);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border-soft);
+  }
+  .topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:1080px;margin:0 auto;}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:16px;}
+  .brand-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--emerald));display:flex;align-items:center;justify-content:center;font-size:14px;color:#0a0a0f;font-weight:800;}
+  .topbar-actions{display:flex;gap:10px;align-items:center;}
+  .btn{
+    border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;
+    padding:10px 18px;border-radius:10px;transition:transform .15s ease, opacity .15s ease;
+    display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-dim);}
+  .btn-ghost:hover{color:var(--text);border-color:#3a3a45;}
+  .btn-gold{background:linear-gradient(135deg,var(--gold),#f4d17a);color:#241b04;box-shadow:0 4px 20px rgba(232,184,74,.25);}
+  .btn-gold:hover{opacity:.92;}
+  .btn-emerald{background:var(--emerald);color:#04241a;}
+  .btn-small{padding:7px 12px;font-size:12.5px;border-radius:8px;}
+  .btn-block{width:100%;justify-content:center;}
+
+  /* Hero */
+  .hero{padding:64px 0 36px;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;
+    font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);
+    border:1px solid rgba(232,184,74,.3);background:rgba(232,184,74,.06);
+    padding:6px 12px;border-radius:99px;margin-bottom:20px;
+  }
+  .hero h1{font-size:clamp(30px,5vw,46px);line-height:1.08;max-width:720px;}
+  .hero h1 span{color:var(--emerald);}
+  .hero p{color:var(--text-dim);font-size:16px;max-width:560px;margin-top:16px;}
+
+  /* Card / grid */
+  .grid{display:grid;grid-template-columns:1.1fr 1fr;gap:22px;align-items:start;}
+  @media(max-width:860px){.grid{grid-template-columns:1fr;}}
+  .card{
+    background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:26px;
+  }
+  .card h2{font-size:19px;margin-bottom:4px;}
+  .card .sub{color:var(--text-faint);font-size:13px;margin-bottom:20px;}
+
+  .field{margin-bottom:16px;}
+  .field label{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-bottom:7px;}
+  .field label .hint{color:var(--text-faint);font-size:11.5px;font-family:'DM Mono',monospace;}
+  .field input[type=number], .field select{
+    width:100%;background:var(--bg-elev);border:1px solid var(--border);color:var(--text);
+    padding:11px 12px;border-radius:9px;font-size:15px;font-family:'DM Mono',monospace;
+    transition:border-color .15s ease;
+  }
+  .field input[type=number]:focus, .field select:focus{outline:none;border-color:var(--gold-dim);}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .range-row{display:flex;align-items:center;gap:12px;}
+  .range-row input[type=range]{flex:1;accent-color:var(--emerald);}
+  .range-val{font-family:'DM Mono',monospace;font-size:13px;color:var(--emerald);min-width:44px;text-align:right;}
+
+  /* Results */
+  .rate-hero{
+    background:linear-gradient(160deg, rgba(47,214,143,.10), rgba(155,123,240,.06));
+    border:1px solid rgba(47,214,143,.25);border-radius:var(--radius);
+    padding:28px;text-align:center;margin-bottom:16px;
+  }
+  .rate-hero .label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);font-family:'DM Mono',monospace;}
+  .rate-hero .amount{font-family:'Syne',sans-serif;font-weight:800;font-size:46px;color:var(--emerald);margin:8px 0 2px;}
+  .rate-hero .amount small{font-size:16px;color:var(--text-dim);font-weight:600;}
+  .rate-hero .note{font-size:12.5px;color:var(--text-faint);}
+
+  .rate-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+  .rate-chip{background:var(--bg-elev);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+  .rate-chip .v{font-family:'DM Mono',monospace;font-size:16px;color:var(--gold);font-weight:500;}
+  .rate-chip .l{font-size:11px;color:var(--text-faint);margin-top:3px;}
+
+  canvas#breakdownChart{width:100%;height:180px;display:block;}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:12px;color:var(--text-dim);}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+
+  /* Project calc */
+  .project-calc{display:flex;gap:10px;margin-top:6px;}
+  .project-calc input{flex:1;}
+  .project-result{margin-top:12px;background:var(--bg-elev);border:1px dashed var(--border);border-radius:10px;padding:14px;font-size:14px;color:var(--text-dim);}
+  .project-result b{color:var(--emerald);font-family:'DM Mono',monospace;}
+
+  /* Premium lock section */
+  .locked-wrap{position:relative;margin-top:26px;}
+  .locked-content{filter:blur(5px);pointer-events:none;user-select:none;opacity:.55;}
+  .lock-overlay{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;text-align:center;padding:20px;background:linear-gradient(180deg, rgba(10,10,15,.4), rgba(10,10,15,.85));
+    border-radius:var(--radius);
+  }
+  .lock-icon{width:46px;height:46px;border-radius:50%;background:rgba(232,184,74,.12);border:1px solid rgba(232,184,74,.35);display:flex;align-items:center;justify-content:center;font-size:20px;}
+  .lock-overlay h3{font-size:19px;}
+  .lock-overlay p{color:var(--text-dim);font-size:13.5px;max-width:360px;}
+  .price-tag{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--gold);}
+  .price-tag small{font-size:13px;color:var(--text-faint);font-weight:600;}
+
+  .scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  @media(max-width:700px){.scenario-grid{grid-template-columns:1fr;}}
+  .scenario-card{background:var(--bg-elev);border:1px solid var(--border);border-radius:10px;padding:16px;}
+  .scenario-card h4{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--violet);margin-bottom:8px;}
+  .scenario-card .rate{font-family:'DM Mono',monospace;font-size:20px;color:var(--text);}
+  .scenario-card p{font-size:11.5px;color:var(--text-faint);margin-top:6px;}
+
+  .ai-box textarea{width:100%;background:var(--bg-elev);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:12px;font-family:'DM Sans',sans-serif;font-size:13.5px;min-height:110px;resize:vertical;}
+
+  /* Ad slots */
+  .ad-slot{
+    border:1px dashed var(--border);border-radius:10px;padding:18px;text-align:center;
+    color:var(--text-faint);font-size:11.5px;font-family:'DM Mono',monospace;margin:24px 0;
+  }
+
+  /* Modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(5,5,8,.7);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
+  .modal-backdrop.open{display:flex;}
+  .modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);max-width:560px;width:100%;max-height:82vh;overflow-y:auto;padding:28px;}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .modal h2{font-size:20px;}
+  .modal-close{background:none;border:none;color:var(--text-dim);font-size:22px;cursor:pointer;line-height:1;}
+  .modal-body p, .modal-body li{color:var(--text-dim);font-size:14.5px;margin-bottom:10px;}
+  .modal-body h3{font-size:15px;color:var(--gold);margin:16px 0 6px;}
+  .modal-body ul{padding-left:20px;}
+
+  footer{padding:40px 0 60px;border-top:1px solid var(--border-soft);margin-top:40px;color:var(--text-faint);font-size:12.5px;text-align:center;}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--bg-card);border:1px solid var(--border);padding:12px 20px;border-radius:10px;
+    font-size:13.5px;opacity:0;transition:all .25s ease;z-index:200;pointer-events:none;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  section{padding:14px 0;}
+  .section-title{font-size:22px;margin-bottom:4px;}
+  .section-sub{color:var(--text-faint);font-size:13.5px;margin-bottom:20px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="brand-mark">₹</span> Hourly Rate Optimizer</div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-small" onclick="openGuide()">हिंदी गाइड</button>
+      <button class="btn btn-gold btn-small" id="unlockTopBtn" onclick="startUnlock()">Unlock Pro — ₹149</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">● Built for Indian Freelancers &amp; Consultants</div>
+    <h1>Stop guessing your rate. <span>Calculate</span> what you actually need to charge.</h1>
+    <p>Enter your income goal, expenses and real working hours — this tool works backward from your target to give you an hourly, daily and project rate that actually covers your life, not just your time.</p>
+  </section>
+
+  <section>
+    <div class="grid">
+      <!-- INPUT CARD -->
+      <div class="card">
+        <h2>Your numbers</h2>
+        <div class="sub">Sab values monthly ya yearly — jo bhi comfortable ho, sirf consistent rakhiye.</div>
+
+        <div class="field">
+          <label>Desired annual income (₹) <span class="hint">take-home target</span></label>
+          <input type="number" id="income" value="1200000" min="0" step="10000">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Monthly business expenses (₹)</label>
+            <input type="number" id="expenses" value="8000" min="0" step="500">
+          </div>
+          <div class="field">
+            <label>Tax rate <span class="hint">approx %</span></label>
+            <input type="number" id="tax" value="15" min="0" max="45" step="1">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Working days / week</label>
+            <input type="number" id="workDays" value="5" min="1" max="7" step="1">
+          </div>
+          <div class="field">
+            <label>Working hours / day</label>
+            <input type="number" id="workHours" value="7" min="1" max="14" step="0.5">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Vacation + sick days / year</label>
+            <input type="number" id="vacationDays" value="18" min="0" max="120" step="1">
+          </div>
+          <div class="field">
+            <label>Public holidays / year</label>
+            <input type="number" id="holidays" value="12" min="0" max="40" step="1">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Billable time <span class="range-val" id="billableVal">65%</span></label>
+          <div class="range-row">
+            <input type="range" id="billable" min="20" max="95" value="65" oninput="onBillableChange()">
+          </div>
+          <div style="font-size:11.5px;color:var(--text-faint);margin-top:5px;">Baaki time admin, marketing, learning, unpaid follow-ups mein jaata hai — usually 30–45%.</div>
+        </div>
+
+        <div class="field">
+          <label>Desired profit margin <span class="range-val" id="marginVal">12%</span></label>
+          <div class="range-row">
+            <input type="range" id="margin" min="0" max="40" value="12" oninput="onMarginChange()">
+          </div>
+        </div>
+
+        <button class="btn btn-emerald btn-block" onclick="calculate()">Calculate my rate</button>
+      </div>
+
+      <!-- RESULTS CARD -->
+      <div class="card">
+        <h2>Your optimized rate</h2>
+        <div class="sub">Yeh rate aapki life, taxes aur non-billable time — sab cover karta hai.</div>
+
+        <div class="rate-hero">
+          <div class="label">Recommended hourly rate</div>
+          <div class="amount">₹<span id="hourlyRate">0</span><small>/hr</small></div>
+          <div class="note" id="rateNote">Based on your current inputs</div>
+        </div>
+
+        <div class="rate-breakdown">
+          <div class="rate-chip"><div class="v">₹<span id="dailyRate">0</span></div><div class="l">Daily rate</div></div>
+          <div class="rate-chip"><div class="v">₹<span id="weeklyRate">0</span></div><div class="l">Weekly rate</div></div>
+          <div class="rate-chip"><div class="v">₹<span id="monthlyRate">0</span></div><div class="l">Monthly (billable)</div></div>
+        </div>
+
+        <canvas id="breakdownChart" width="600" height="180"></canvas>
+        <div class="legend" id="chartLegend"></div>
+
+        <div style="margin-top:20px;">
+          <label style="font-size:13px;color:var(--text-dim);">Quick project estimate</label>
+          <div class="project-calc">
+            <input type="number" id="projectHours" placeholder="Estimated hours" value="20">
+            <button class="btn btn-ghost btn-small" onclick="calcProject()">Estimate</button>
+          </div>
+          <div class="project-result" id="projectResult">Enter estimated hours to see the project quote.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ad-slot">Advertisement — 728×90</div>
+
+  <!-- PREMIUM SECTION -->
+  <section>
+    <h2 class="section-title">Pro tools</h2>
+    <div class="section-sub">Rate scenarios, client-type breakdown aur AI negotiation script — ek baar ₹149, hamesha ke liye.</div>
+
+    <div class="locked-wrap" id="lockedWrap">
+      <div class="locked-content" id="lockedContent">
+        <div class="card" style="margin-bottom:16px;">
+          <h2>Rate scenarios</h2>
+          <div class="sub">Conservative se aggressive tak — teeno positioning dekhiye ek saath.</div>
+          <div class="scenario-grid">
+            <div class="scenario-card"><h4>Conservative</h4><div class="rate mono">₹<span id="scenLow">0</span>/hr</div><p>Safe floor — new clients, market entry.</p></div>
+            <div class="scenario-card"><h4>Balanced</h4><div class="rate mono">₹<span id="scenMid">0</span>/hr</div><p>Your calculated optimal rate.</p></div>
+            <div class="scenario-card"><h4>Premium</h4><div class="rate mono">₹<span id="scenHigh">0</span>/hr</div><p>Positioning as a specialist / senior expert.</p></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>AI rate justification script</h2>
+          <div class="sub">Client ko rate justify karne ke liye ek ready script — Claude se generate.</div>
+          <div class="ai-box">
+            <button class="btn btn-ghost btn-small" onclick="generateScript()" style="margin-bottom:10px;">Generate script</button>
+            <textarea id="aiScriptOut" placeholder="Aapka personalized negotiation script yahan aayega..." readonly></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="lock-overlay" id="lockOverlay">
+        <div class="lock-icon">🔒</div>
+        <h3>Unlock Pro tools</h3>
+        <p>Scenario comparison, client-type rate breakdown aur AI-generated negotiation script — sab kuch ek baar ke payment mein, lifetime access.</p>
+        <div class="price-tag">₹149 <small>one-time</small></div>
+        <button class="btn btn-gold" onclick="startUnlock()">Unlock now</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="ad-slot">Advertisement — 336×280</div>
+
+  <section>
+    <h2 class="section-title">Why this number, not a round figure</h2>
+    <div class="section-sub"></div>
+    <div class="grid" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="card" style="padding:18px;">
+        <h3 style="font-size:15px;color:var(--emerald);">Billable ≠ working hours</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Most freelancers only bill 50–65% of the hours they actually work. This tool builds that reality in.</p>
+      </div>
+      <div class="card" style="padding:18px;">
+        <h3 style="font-size:15px;color:var(--violet);">Taxes eat first</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Your rate is grossed-up for tax so your take-home actually matches your goal.</p>
+      </div>
+      <div class="card" style="padding:18px;">
+        <h3 style="font-size:15px;color:var(--gold);">Time off is real cost</h3>
+        <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">Vacation and holidays reduce your billable days/year — and your rate should account for it.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    IncomeAIHub · Hourly Rate Optimizer — Made for Indian freelancers, CAs &amp; consultants.
+    <div style="margin-top:8px;"><a href="#" onclick="openGuide();return false;" style="color:var(--text-dim);">हिंदी गाइड देखें</a></div>
+  </div>
+</footer>
+
+<!-- HINDI GUIDE MODAL -->
+<div class="modal-backdrop" id="guideModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>उपयोग गाइड (हिंदी)</h2>
+      <button class="modal-close" onclick="closeGuide()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>यह टूल आपको बताता है कि आपको प्रति घंटा कितना चार्ज करना चाहिए ताकि आपकी सारी ज़िंदगी की ज़रूरतें, टैक्स और खाली समय भी कवर हो सके।</p>
+      <h3>कैसे इस्तेमाल करें</h3>
+      <ul>
+        <li><b>Desired annual income:</b> आप साल भर में टेक-होम कितना कमाना चाहते हैं।</li>
+        <li><b>Monthly expenses:</b> सॉफ्टवेयर, इंटरनेट, को-वर्किंग जैसे बिज़नेस खर्चे।</li>
+        <li><b>Working days/hours:</b> आप असल में हफ्ते में कितने दिन और दिन में कितने घंटे काम करते हैं।</li>
+        <li><b>Billable time:</b> कुल समय में से कितना % समय क्लाइंट के लिए बिल किया जा सकता है (बाकी समय admin/marketing में जाता है)।</li>
+        <li><b>Profit margin:</b> आप कितना अतिरिक्त मार्जिन चाहते हैं भविष्य की ग्रोथ के लिए।</li>
+      </ul>
+      <h3>Pro Tools (₹149)</h3>
+      <p>तीन अलग-अलग rate scenarios (Conservative/Balanced/Premium) और AI से बना हुआ negotiation script जो आप क्लाइंट को rate justify करने के लिए भेज सकते हैं।</p>
+      <h3>ध्यान रखें</h3>
+      <p>यह calculation एक अनुमान है — अपने niche और market के हिसाब से थोड़ा adjust करें।</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================== CONFIG (fill with your own project values) ================== */
+const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+const RAZORPAY_KEY_ID = "rzp_live_YOUR_KEY_ID";
+const UNLOCK_PRICE_PAISE = 14900; // ₹149
+
+/* ================== DEVICE ID / UNLOCK STATE ================== */
+function getDeviceId(){
+  let id = localStorage.getItem('hro_device_id');
+  if(!id){
+    id = 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('hro_device_id', id);
+  }
+  return id;
+}
+function isUnlocked(){
+  return localStorage.getItem('hro_unlocked') === 'true';
+}
+function setUnlocked(){
+  localStorage.setItem('hro_unlocked', 'true');
+  applyUnlockState();
+}
+
+function applyUnlockState(){
+  const overlay = document.getElementById('lockOverlay');
+  const content = document.getElementById('lockedContent');
+  const topBtn = document.getElementById('unlockTopBtn');
+  if(isUnlocked()){
+    overlay.style.display = 'none';
+    content.classList.remove('locked-content');
+    if(topBtn){ topBtn.textContent = 'Pro Unlocked ✓'; topBtn.classList.remove('btn-gold'); topBtn.classList.add('btn-ghost'); topBtn.onclick = null; }
+  }
+}
+
+/* Optional: verify unlock status against Supabase for this device on load */
+async function checkUnlockRemote(){
+  try{
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/check-unlock`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_ANON_KEY}`},
+      body: JSON.stringify({ device_id: getDeviceId(), product: 'hourly-rate-optimizer' })
+    });
+    const data = await res.json();
+    if(data && data.unlocked){ setUnlocked(); }
+  }catch(e){ /* offline / not configured yet — silently fall back to localStorage */ }
+}
+
+/* ================== RAZORPAY UNLOCK FLOW ================== */
+async function startUnlock(){
+  if(isUnlocked()){ showToast('Pro already unlocked ✓'); return; }
+  showToast('Opening secure checkout...');
+  try{
+    const orderRes = await fetch(`${SUPABASE_URL}/functions/v1/create-order`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_ANON_KEY}`},
+      body: JSON.stringify({ amount: UNLOCK_PRICE_PAISE, device_id: getDeviceId(), product: 'hourly-rate-optimizer' })
+    });
+    const order = await orderRes.json();
+
+    const options = {
+      key: RAZORPAY_KEY_ID,
+      amount: UNLOCK_PRICE_PAISE,
+      currency: 'INR',
+      name: 'IncomeAIHub',
+      description: 'Hourly Rate Optimizer — Pro Unlock',
+      order_id: order.id,
+      handler: async function(response){
+        const verifyRes = await fetch(`${SUPABASE_URL}/functions/v1/verify-payment`, {
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_ANON_KEY}`},
+          body: JSON.stringify({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            device_id: getDeviceId(),
+            product: 'hourly-rate-optimizer'
+          })
+        });
+        const verify = await verifyRes.json();
+        if(verify && verify.success){
+          setUnlocked();
+          showToast('Pro unlocked! 🎉');
+          calculate();
+        }else{
+          showToast('Payment verification failed. Contact support.');
+        }
+      },
+      theme:{ color:'#e8b84a' }
+    };
+    const rzp = new Razorpay(options);
+    rzp.open();
+  }catch(err){
+    showToast('Could not start checkout. Please try again.');
+  }
+}
+
+/* ================== TOAST ================== */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 3200);
+}
+
+/* ================== GUIDE MODAL ================== */
+function openGuide(){ document.getElementById('guideModal').classList.add('open'); }
+function closeGuide(){ document.getElementById('guideModal').classList.remove('open'); }
+document.getElementById('guideModal').addEventListener('click', function(e){
+  if(e.target === this) closeGuide();
+});
+
+/* ================== SLIDER LABELS ================== */
+function onBillableChange(){
+  document.getElementById('billableVal').textContent = document.getElementById('billable').value + '%';
+}
+function onMarginChange(){
+  document.getElementById('marginVal').textContent = document.getElementById('margin').value + '%';
+}
+
+/* ================== CORE CALCULATION ================== */
+let lastResult = null;
+
+function computeRate(billablePct, marginPct){
+  const income = parseFloat(document.getElementById('income').value) || 0;
+  const expensesMonthly = parseFloat(document.getElementById('expenses').value) || 0;
+  const taxPct = parseFloat(document.getElementById('tax').value) || 0;
+  const workDaysPerWeek = parseFloat(document.getElementById('workDays').value) || 5;
+  const workHoursPerDay = parseFloat(document.getElementById('workHours').value) || 7;
+  const vacationDays = parseFloat(document.getElementById('vacationDays').value) || 0;
+  const holidays = parseFloat(document.getElementById('holidays').value) || 0;
+
+  const annualExpenses = expensesMonthly * 12;
+  const grossNeeded = (income + annualExpenses) / (1 - marginPct/100);
+  const grossedForTax = grossNeeded / (1 - taxPct/100);
+
+  const totalWorkDaysYear = Math.max(1, (workDaysPerWeek * 52) - vacationDays - holidays);
+  const totalWorkHoursYear = totalWorkDaysYear * workHoursPerDay;
+  const billableHoursYear = Math.max(1, totalWorkHoursYear * (billablePct/100));
+
+  const hourlyRate = grossedForTax / billableHoursYear;
+  const dailyRate = hourlyRate * workHoursPerDay;
+  const weeklyRate = dailyRate * workDaysPerWeek;
+  const billableHoursMonth = billableHoursYear / 12;
+  const monthlyBillable = hourlyRate * billableHoursMonth;
+
+  return {
+    hourlyRate, dailyRate, weeklyRate, monthlyBillable,
+    income, annualExpenses, grossNeeded, grossedForTax,
+    totalWorkDaysYear, totalWorkHoursYear, billableHoursYear
+  };
+}
+
+function calculate(){
+  const billablePct = parseFloat(document.getElementById('billable').value);
+  const marginPct = parseFloat(document.getElementById('margin').value);
+  const r = computeRate(billablePct, marginPct);
+  lastResult = r;
+
+  document.getElementById('hourlyRate').textContent = Math.round(r.hourlyRate).toLocaleString('en-IN');
+  document.getElementById('dailyRate').textContent = Math.round(r.dailyRate).toLocaleString('en-IN');
+  document.getElementById('weeklyRate').textContent = Math.round(r.weeklyRate).toLocaleString('en-IN');
+  document.getElementById('monthlyRate').textContent = Math.round(r.monthlyBillable).toLocaleString('en-IN');
+  document.getElementById('rateNote').textContent =
+    `Assumes ~${Math.round(r.billableHoursYear)} billable hrs/year across ${Math.round(r.totalWorkDaysYear)} working days`;
+
+  drawChart(r);
+  updateScenarios(billablePct);
+  calcProject();
+}
+
+function updateScenarios(baseBillable){
+  const low = computeRate(Math.max(20, baseBillable - 12), 4);
+  const mid = lastResult;
+  const high = computeRate(Math.min(95, baseBillable + 5), 28);
+  document.getElementById('scenLow').textContent = Math.round(low.hourlyRate).toLocaleString('en-IN');
+  document.getElementById('scenMid').textContent = Math.round(mid.hourlyRate).toLocaleString('en-IN');
+  document.getElementById('scenHigh').textContent = Math.round(high.hourlyRate).toLocaleString('en-IN');
+}
+
+function calcProject(){
+  if(!lastResult) return;
+  const hours = parseFloat(document.getElementById('projectHours').value) || 0;
+  const total = hours * lastResult.hourlyRate;
+  document.getElementById('projectResult').innerHTML =
+    `${hours} hours at your rate ≈ <b>₹${Math.round(total).toLocaleString('en-IN')}</b> project quote.`;
+}
+
+/* ================== NATIVE CANVAS CHART (no external CDN) ================== */
+function drawChart(r){
+  const canvas = document.getElementById('breakdownChart');
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = canvas.clientWidth || 560;
+  const cssH = 180;
+  canvas.width = cssW * dpr;
+  canvas.height = cssH * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,cssW,cssH);
+
+  const segments = [
+    { label:'Take-home income', value:r.income, color:'#2fd68f' },
+    { label:'Business expenses', value:r.annualExpenses, color:'#9b7bf0' },
+    { label:'Profit margin', value:Math.max(0, r.grossNeeded - r.income - r.annualExpenses), color:'#e8b84a' },
+    { label:'Tax buffer', value:Math.max(0, r.grossedForTax - r.grossNeeded), color:'#ef6a6a' },
+  ];
+  const total = segments.reduce((s,x)=>s+x.value,0) || 1;
+
+  const barY = 70, barH = 40, padX = 10;
+  const barW = cssW - padX*2;
+  let x = padX;
+  segments.forEach(seg=>{
+    const w = (seg.value/total) * barW;
+    ctx.fillStyle = seg.color;
+    ctx.fillRect(x, barY, Math.max(w,0), barH);
+    x += w;
+  });
+
+  ctx.fillStyle = '#a3a0b0';
+  ctx.font = '11px DM Mono, monospace';
+  ctx.fillText('Annual revenue needed breakdown', padX, 30);
+  ctx.fillStyle = '#69697a';
+  ctx.fillText('₹' + Math.round(r.grossedForTax).toLocaleString('en-IN') + ' total / year', padX, barY + barH + 22);
+
+  const legend = document.getElementById('chartLegend');
+  legend.innerHTML = segments.map(s=>
+    `<span><span class="dot" style="background:${s.color}"></span>${s.label} — ₹${Math.round(s.value).toLocaleString('en-IN')}</span>`
+  ).join('');
+}
+
+window.addEventListener('resize', ()=>{ if(lastResult) drawChart(lastResult); });
+
+/* ================== AI SCRIPT GENERATOR (uses Supabase ai-proxy Edge Function) ================== */
+async function generateScript(){
+  if(!isUnlocked()){ showToast('Unlock Pro to use this feature'); return; }
+  if(!lastResult){ showToast('Calculate your rate first'); return; }
+  const out = document.getElementById('aiScriptOut');
+  out.value = 'Generating your negotiation script...';
+  try{
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/ai-proxy`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_ANON_KEY}`},
+      body: JSON.stringify({
+        prompt: `Write a short, confident but polite Hinglish script (6-8 sentences) a freelancer in India can use to justify an hourly rate of ₹${Math.round(lastResult.hourlyRate)} to a hesitant client. Focus on value delivered, not just time spent.`
+      })
+    });
+    const data = await res.json();
+    out.value = (data && data.text) ? data.text : 'Could not generate script right now. Please try again.';
+  }catch(e){
+    out.value = 'AI service not reachable. Please check your connection and try again.';
+  }
+}
+
+/* ================== INIT ================== */
+applyUnlockState();
+checkUnlockRemote();
+calculate();
+</script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</body>
+</html>
